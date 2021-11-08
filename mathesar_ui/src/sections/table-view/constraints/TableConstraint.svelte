@@ -35,7 +35,7 @@
     }
   }
   
-  $: columnSummary = constraint.columns.join(', ');
+  $: columnSummary = [...constraint.columns.values()].join(', ');
   $: transitionDuration = useTransitionOut ? 200 : 0 as number;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   $: transition = { x: 200, duration: transitionDuration } as FlyParams;

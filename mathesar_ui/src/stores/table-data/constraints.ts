@@ -15,15 +15,37 @@ import type {
 import type { PaginatedResponse } from '@mathesar/utils/api';
 import type { CancellablePromise } from '@mathesar-component-library';
 import type { DBObjectEntry } from '@mathesar/App.d';
+import { setsAreEqual } from '@mathesar/utils/language';
 import type { Column } from './columns';
 
 export type ConstraintType = 'foreignkey' | 'primary' | 'unique' | 'check' | 'exclude';
 
-export interface Constraint {
+export interface ConstraintBase {
   id: number,
   name: string,
   type: ConstraintType,
+}
+
+export interface SerializedConstraint extends ConstraintBase {
   columns: string[],
+}
+
+export interface Constraint extends ConstraintBase {
+  columns: Set<string>,
+}
+
+function serialize<T extends Partial<Constraint>>(constraint: T) {
+  return {
+    ...constraint,
+    columns: [...constraint.columns.values()],
+  };
+}
+
+function deserialize<T extends Partial<SerializedConstraint>>(serializedConstraint: T) {
+  return {
+    ...serializedConstraint,
+    columns: new Set(serializedConstraint.columns),
+  };
 }
 
 export interface ConstraintsData {
@@ -35,10 +57,10 @@ export interface ConstraintsData {
 function api(url: string) {
   return {
     get() {
-      return getAPI<PaginatedResponse<Constraint>>(`${url}?limit=500`);
+      return getAPI<PaginatedResponse<SerializedConstraint>>(`${url}?limit=500`);
     },
-    add(constraintDetails: Partial<Constraint>) {
-      return postAPI<Partial<Constraint>>(url, constraintDetails);
+    add(constraintDetails: Partial<SerializedConstraint>) {
+      return postAPI<Partial<SerializedConstraint>>(url, constraintDetails);
     },
     remove(constraintId: Constraint['id']) {
       return deleteAPI(`${url}${constraintId}/`);
@@ -51,7 +73,7 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
 
   private store: Writable<ConstraintsData>;
 
-  private promise: CancellablePromise<PaginatedResponse<Constraint>> | null;
+  private promise: CancellablePromise<PaginatedResponse<SerializedConstraint>> | null;
 
   private api: ReturnType<typeof api>;
 
@@ -103,7 +125,7 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
 
       const storeData: ConstraintsData = {
         state: States.Done,
-        constraints: response.results,
+        constraints: response.results.map(deserialize),
       };
       this.set(storeData);
       this.fetchCallback?.(storeData);
@@ -121,7 +143,7 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
   }
 
   async add(constraintDetails: Partial<Constraint>): Promise<Partial<Constraint>> {
-    const constraint = await this.api.add(constraintDetails);
+    const constraint = deserialize(await this.api.add(serialize(constraintDetails)));
     await this.fetch();
     return constraint;
   }
@@ -137,17 +159,10 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
    * columns, two of which are passed to this function, that constraint will
    * _not_ be returned.
    */
-  constraintsThatMatchSetOfColumns(columns: Column[]): Readable<Constraint[]> {
-    const columnsNames = columns.map((c) => c.name);
-    function isMatch(constraint: Constraint) {
-      if (constraint.columns.length !== columnsNames.length) {
-        return false;
-      }
-      return constraint.columns.every(
-        (constraintColumn) => columnsNames.includes(constraintColumn),
-      );
-    }
-    return derived(this.store, (s) => s.constraints.filter(isMatch));
+  constraintsThatMatchSetOfColumns(columnNames: Set<string>): Readable<Constraint[]> {
+    return derived(this.store, (s) => s.constraints.filter(
+      (constraint) => setsAreEqual(constraint.columns, columnNames),
+    ));
   }
 
   /**
@@ -156,7 +171,7 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
    * set too.
    */
   columnHasUniqueConstraint(column: Column): Readable<boolean> {
-    const constraints = this.constraintsThatMatchSetOfColumns([column]);
+    const constraints = this.constraintsThatMatchSetOfColumns(new Set([column.name]));
     return derived(constraints, (c) => c.some((constraint) => constraint.type === 'unique'));
   }
 
@@ -181,14 +196,14 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
     }
 
     const uniqueConstraintsForColumn = getStoreValue(
-      this.constraintsThatMatchSetOfColumns([column]),
+      this.constraintsThatMatchSetOfColumns(new Set([column.name])),
     ).filter((c) => c.type === 'unique');
     const currentlyIsUnique = uniqueConstraintsForColumn.length > 0;
     if (shouldBeUnique === currentlyIsUnique) {
       return;
     }
     if (shouldBeUnique) {
-      await this.add({ type: 'unique', columns: [column.name] });
+      await this.add({ type: 'unique', columns: new Set([column.name]) });
       return;
     }
     // Technically, one column can have two unique constraints applied on it,

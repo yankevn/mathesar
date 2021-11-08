@@ -8,6 +8,16 @@ export function intersection<T>(a: Set<T>, b: Set<T>): Array<T> {
 }
 
 /**
+ * Two sets are equal when they contain all the same elements.
+ */
+export function setsAreEqual<T>(a: Set<T>, b: Set<T>): boolean {
+  if (a.size !== b.size) {
+    return false;
+  }
+  return [...a.values()].every((v) => b.has(v));
+}
+
+/**
  * Devised for easy type declaration when constructing a two-element tuple (a pair). Useful when
  * using the Map constructor to turn an array of pairs into a Map.
  *
