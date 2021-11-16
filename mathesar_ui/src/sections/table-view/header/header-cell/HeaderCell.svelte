@@ -6,7 +6,7 @@
   } from '@fortawesome/free-solid-svg-icons';
   import { Dropdown, Icon, Button } from '@mathesar-component-library';
   import type { ConstraintsDataStore } from '@mathesar/stores/table-data/types';
-  import { abstractTypes, getAbstractTypeForDBType } from '@mathesar/stores/abstractTypes';
+  import { abstractTypes, getAbstractTypeForDBType } from '@mathesar/stores/abstract-types';
   import type {
     Meta,
     Column,
