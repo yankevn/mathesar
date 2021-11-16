@@ -1,9 +1,9 @@
 <script context="module" lang="ts">
-  let id = 0;
+  let moduleWideId = 0;
 
   function getId() {
-    id += 1;
-    return id;
+    moduleWideId += 1;
+    return `checkbox-${moduleWideId}`;
   }
 </script>
 
@@ -18,8 +18,9 @@
   export let disabled = false;
   export let label: string = null;
   export let appearance: 'default' | 'toggle' = 'default';
+  export let id: string = null;
 
-  const componentId = getId();
+  $: componentId = id || getId();
 
   function onChange(e: Event) {
     checked = !checked;
@@ -30,10 +31,10 @@
   }
 </script>
 
-<label class="checkbox {appearance}" for="checkbox-{componentId}"
+<label class="checkbox {appearance}" for={componentId}
         class:checked class:indeterminate class:disabled>
   <span class="wrapper">
-    <input type="checkbox" id="checkbox-{componentId}"
+    <input type="checkbox" id={componentId}
             checked={checked}
             {indeterminate} {disabled} {value}
             on:change={onChange}/>
