@@ -142,6 +142,11 @@
       </span>
     </Button>
   </li>
+</ul>
+
+<div class="divider"/>
+
+<ul class="constriant-options">
   <!--
     TODO Once we have a DropdownMenu component, make this option
     disabled if the column is a primary key.
@@ -151,7 +156,7 @@
       {#if isRequestingToggleAllowNull}
         <Icon class="opt" data={faSpinner} spin={true}/>
       {:else}
-        <span class="opt"><Checkbox checked={allowsNull} /></span>
+        <span class="opt"><Checkbox appearance="toggle" checked={allowsNull} /></span>
       {/if}
       <span>Allow NULL</span>
     </Button>
@@ -165,7 +170,7 @@
       {#if isRequestingToggleAllowDuplicates}
         <Icon class="opt" data={faSpinner} spin={true}/>
       {:else}
-        <span class="opt"><Checkbox checked={allowsDuplicates} /></span>
+        <span class="opt"><Checkbox appearance="toggle" checked={allowsDuplicates} /></span>
       {/if}
       <span>Allow Duplicates</span>
     </Button>
