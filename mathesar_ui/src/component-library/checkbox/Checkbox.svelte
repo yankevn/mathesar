@@ -17,6 +17,7 @@
   export let indeterminate = false;
   export let disabled = false;
   export let label: string = null;
+  export let appearance: 'default' | 'toggle' = 'default';
 
   const componentId = getId();
 
@@ -29,7 +30,7 @@
   }
 </script>
 
-<label class="checkbox" for="checkbox-{componentId}"
+<label class="checkbox {appearance}" for="checkbox-{componentId}"
         class:checked class:indeterminate class:disabled>
   <span class="wrapper">
     <input type="checkbox" id="checkbox-{componentId}"
