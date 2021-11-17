@@ -75,7 +75,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
 
   private store: Writable<ColumnsData>;
 
-  private promise: CancellablePromise<PaginatedResponse<Column>>;
+  private promise: CancellablePromise<PaginatedResponse<Column>> | null = null;
 
   private api: ReturnType<typeof api>;
 
@@ -87,7 +87,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
     type: TabularType,
     parentId: number,
     meta: Meta,
-    fetchCallback?: (storeData: ColumnsData) => void,
+    fetchCallback: (storeData: ColumnsData) => void = () => {},
   ) {
     super();
     this.type = type;
@@ -95,7 +95,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
     this.store = writable({
       state: States.Loading,
       columns: [],
-      primaryKey: null,
+      primaryKey: undefined,
     });
     this.meta = meta;
     this.api = api(`/${this.type === TabularType.Table ? 'tables' : 'views'}/${this.parentId}/columns/`);
@@ -121,7 +121,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
     return getStoreValue(this.store);
   }
 
-  async fetch(): Promise<ColumnsData> {
+  async fetch(): Promise<ColumnsData | null> {
     this.update((existingData) => ({
       ...existingData,
       state: States.Loading,
@@ -138,7 +138,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
       const storeData: ColumnsData = {
         state: States.Done,
         columns: columnResponse,
-        primaryKey: pkColumn?.name || null,
+        primaryKey: pkColumn?.name,
       };
       this.set(storeData);
       this.fetchCallback?.(storeData);
@@ -146,9 +146,9 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
     } catch (err) {
       this.set({
         state: States.Error,
-        error: err instanceof Error ? err.message : null,
+        error: err instanceof Error ? err.message : undefined,
         columns: [],
-        primaryKey: null,
+        primaryKey: undefined,
       });
     } finally {
       this.promise = null;
