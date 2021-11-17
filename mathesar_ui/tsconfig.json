@@ -7,7 +7,7 @@
     "module": "esnext",
     "types": ["svelte", "jest", "@testing-library/jest-dom", "js-cookie"],
     "importsNotUsedAsValues": "error",
-    "strict": false,
+    "strict": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
     "sourceMap": true,
