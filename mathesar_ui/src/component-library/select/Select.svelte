@@ -40,7 +40,7 @@
   /**
    * Currently selected option.
    */
-  export let value: SelectOption = null;
+  export let value: SelectOption | undefined = undefined;
 
   /**
    * Classes to apply to the content (each of the options).
@@ -60,7 +60,7 @@
   /**
    * The ARIA label for this select component.
    */
-  export let ariaLabel: string = null;
+  export let ariaLabel: string | undefined = undefined;
 
   let isOpen = false;
   let currentIndex = 0;
@@ -82,7 +82,7 @@
         setValue(opts[0]);
       }
     } else {
-      setValue(null);
+      setValue(undefined);
     }
   }
 

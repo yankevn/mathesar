@@ -31,8 +31,8 @@
     $abstractTypes.data,
   );
 
-  let selectedAbstractType: AbstractType = null;
-  let selectedDBTypeOption: SelectOption<DbType> = null;
+  let selectedAbstractType: AbstractType | undefined;
+  let selectedDBTypeOption: SelectOption<DbType> | undefined;
   let typeChangeState = States.Idle;
 
   function selectAbstractType(abstractType: AbstractType) {

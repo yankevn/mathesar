@@ -14,7 +14,7 @@
 
   export let isOpen = false;
   export let isEditMode = false;
-  export let schema: SchemaEntry = null;
+  export let schema: SchemaEntry | undefined = undefined;
 
   let name = '';
   let state: States = States.Idle;
@@ -46,7 +46,7 @@
   async function saveSchema() {
     try {
       state = States.Loading;
-      error = null;
+      error = undefined;
       if (isEditMode) {
         await updateSchema($currentDBName, {
           ...schema,

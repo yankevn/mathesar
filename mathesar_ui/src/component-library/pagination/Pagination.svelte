@@ -15,7 +15,7 @@
   export let page = 1;
   export let pageSize = 10;
   export let total = 0;
-  export let getLink: (page: number, pageSize: number) => string = null;
+  export let getLink: ((page: number, pageSize: number) => string) | undefined = undefined;
 
   export let pageCount = 0;
 

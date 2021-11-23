@@ -129,7 +129,7 @@ export class Display {
     this.recordsData = recordsData;
     this.horizontalScrollOffset = writable(0);
     this.columnPositionMap = writable(new Map() as ColumnPositionMap);
-    this.activeCell = writable(null as ActiveCell);
+    this.activeCell = writable(undefined as ActiveCell);
     this.rowWidth = writable(0);
 
     // subscribers
@@ -164,7 +164,7 @@ export class Display {
   }
 
   resetActiveCell(): void {
-    this.activeCell.set(null as ActiveCell);
+    this.activeCell.set(undefined as ActiveCell);
   }
 
   selectCell(row: TableRecord, column: Column): void {
@@ -185,7 +185,7 @@ export class Display {
     }
   }
 
-  handleKeyEventsOnActiveCell(key: KeyboardEvent['key']): 'moved' | 'changed' | null {
+  handleKeyEventsOnActiveCell(key: KeyboardEvent['key']): 'moved' | 'changed' | undefined {
     const { columns } = this.columnsDataStore.get();
     const totalCount = get(this.recordsData.totalCount);
     const savedRecords = get(this.recordsData.savedRecords);
@@ -270,7 +270,7 @@ export class Display {
       return 'changed';
     }
 
-    return null;
+    return undefined;
   }
 
   destroy(): void {

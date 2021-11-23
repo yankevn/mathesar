@@ -121,7 +121,7 @@ export class TabList {
 
   tabs: Writable<MathesarTab[]>;
 
-  activeTab: Writable<MathesarTab | null>;
+  activeTab: Writable<MathesarTab | undefined>;
 
   private tabsUnsubscriber: Unsubscriber;
 
@@ -163,7 +163,7 @@ export class TabList {
 
     // Active tab <-> url subscriber
     this.activeTabUnsubscriber = this.activeTab.subscribe((activeTabSubstance) => {
-      let activeTabularTab: TabListConfig['activeTabularTab'] = null;
+      let activeTabularTab: TabListConfig['activeTabularTab'] | undefined;
       if (activeTabSubstance?.tabularData) {
         activeTabularTab = [
           activeTabSubstance.tabularData.type,
@@ -254,7 +254,7 @@ export class TabList {
       } else if (tabSubstance[removedTabIndexInTabsArray - 1]) {
         this.activeTab.set(tabSubstance[removedTabIndexInTabsArray - 1]);
       } else {
-        this.activeTab.set(null);
+        this.activeTab.set(undefined);
       }
     }
 

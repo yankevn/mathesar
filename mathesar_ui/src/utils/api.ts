@@ -64,7 +64,7 @@ function sendXHRRequest<T>(method: string, url: string, data?: unknown): Cancell
     request.addEventListener('load', () => {
       if (successStatusCodes.has(request.status)) {
         const result = request.status === NO_CONTENT
-          ? null
+          ? undefined
           : JSON.parse(request.response) as T;
         resolve(result);
       } else {

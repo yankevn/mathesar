@@ -14,7 +14,7 @@
     TableRecord,
   } from '@mathesar/stores/table-data/types';
 
-  export let primaryKeyColumn: string = null;
+  export let primaryKeyColumn: string | undefined = undefined;
   export let row: TableRecord;
   export let meta: Meta;
   export let recordsData: RecordsData;
@@ -22,7 +22,7 @@
   $: ({ selectedRecords, recordModificationState, offset } = meta);
   $: ({ savedRecords, newRecords, totalCount } = recordsData);
 
-  $: primaryKeyValue = row?.[primaryKeyColumn] ?? null;
+  $: primaryKeyValue = row?.[primaryKeyColumn];
   $: isRowSelected = ($selectedRecords as Set<unknown>).has(primaryKeyValue);
   $: genericModificationStatus = getGenericModificationStatus(
     $recordModificationState, row, primaryKeyColumn,

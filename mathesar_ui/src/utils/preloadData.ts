@@ -28,7 +28,7 @@ function getData<T>(selector: string, retainData = false): T {
       console.log(err);
     }
   }
-  return null;
+  return undefined;
 }
 
 export function preloadRouteData<T>(routeName: string): T {

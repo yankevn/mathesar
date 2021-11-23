@@ -76,10 +76,10 @@ export function uploadNewFile(
   );
 
   setInFileStore(fileImportStore, {
-    uploadProgress: null,
+    uploadProgress: undefined,
     uploadStatus: States.Loading,
     uploadPromise,
-    error: null,
+    error: undefined,
   });
 
   setImportStatus(get(fileImportStore).id, {
@@ -88,12 +88,12 @@ export function uploadNewFile(
   });
 
   uploadPromise.then((res: { id: number }) => {
-    completionCallback(fileImportStore, null, res.id);
+    completionCallback(fileImportStore, undefined, res.id);
     return res;
   }).catch((err: Error) => {
     setInFileStore(fileImportStore, {
       uploads: [],
-      uploadProgress: null,
+      uploadProgress: undefined,
       uploadStatus: States.Error,
       error: err.message,
     });
@@ -123,7 +123,7 @@ async function deletePreviewTable(fileImportStore: FileImport): Promise<void> {
     const previewDeletePromise = deleteAPI(`/tables/${fileImportData.previewId}/`);
     setInFileStore(fileImportStore, {
       previewDeletePromise,
-      previewId: null,
+      previewId: undefined,
     });
 
     await previewDeletePromise;
@@ -147,7 +147,7 @@ async function createPreviewTable(
     setInFileStore(fileImportStore, {
       previewTableCreationStatus: States.Loading,
       previewCreatePromise,
-      error: null,
+      error: undefined,
     });
 
     try {
@@ -192,7 +192,7 @@ export async function fetchPreviewTableInfo(
     );
 
     type DataFileResponse = Record<'header', boolean>;
-    let dataFilePromise: CancellablePromise<DataFileResponse> = null;
+    let dataFilePromise: CancellablePromise<DataFileResponse> | undefined;
     if (!fileImportData.isDataFileInfoPresent) {
       dataFilePromise = getAPI<DataFileResponse>(`/data_files/${fileImportData.dataFileId}/`);
     }
@@ -200,7 +200,7 @@ export async function fetchPreviewTableInfo(
     setInFileStore(fileImportStore, {
       previewStatus: States.Loading,
       previewColumnPromise,
-      error: null,
+      error: undefined,
     });
 
     const previewColumnResponse = await previewColumnPromise;
@@ -221,10 +221,10 @@ export async function fetchPreviewTableInfo(
       previewColumnPromise,
       previewColumns,
       isDataFileInfoPresent: true,
-      error: null,
+      error: undefined,
     };
 
-    if (dataFileReponse !== null) {
+    if (dataFileReponse) {
       dataToSet.firstRowHeader = dataFileReponse.header;
     }
 
@@ -237,7 +237,7 @@ export async function fetchPreviewTableInfo(
       error: (err as Error).message,
     });
   }
-  return null;
+  return undefined;
 }
 
 export async function updateDataFileHeader(
@@ -248,7 +248,7 @@ export async function updateDataFileHeader(
   try {
     setInFileStore(fileImportStore, {
       previewStatus: States.Loading,
-      error: null,
+      error: undefined,
     });
 
     await patchAPI(`/data_files/${fileImportData.dataFileId}/`, {
@@ -271,7 +271,7 @@ export async function loadPreview(
   fileImportStore: FileImport,
 ): Promise<{ id: number, name: string }> {
   const fileImportData = get(fileImportStore);
-  let tableCreationResult: { id: number, name: string } = null;
+  let tableCreationResult: { id: number, name: string } | undefined;
 
   if (fileImportData.previewTableCreationStatus === States.Done) {
     tableCreationResult = {
@@ -312,8 +312,8 @@ export async function finishImport(fileImportStore: FileImport): Promise<void> {
     fileImportData.importPromise?.cancel();
 
     try {
-      let columnChangePromise: CancellablePromise<unknown> = null;
-      let verificationPromise: CancellablePromise<unknown> = null;
+      let columnChangePromise: CancellablePromise<unknown> | undefined;
+      let verificationPromise: CancellablePromise<unknown> | undefined;
 
       const saveTable = async () => {
         columnChangePromise = patchAPI(`/tables/${fileImportData.previewId}/`, {
@@ -339,7 +339,7 @@ export async function finishImport(fileImportStore: FileImport): Promise<void> {
       setInFileStore(fileImportStore, {
         importStatus: States.Loading,
         importPromise,
-        error: null,
+        error: undefined,
       });
       await importPromise;
 
@@ -394,7 +394,7 @@ export function cancelImport(fileImportStore: FileImport): void {
 export async function importFromURL(fileImportStore: FileImport, url: string): Promise<void> {
   setInFileStore(fileImportStore, {
     uploadStatus: States.Loading,
-    error: null,
+    error: undefined,
   });
   try {
     const uploadResponse = await postAPI<{ id: number }>('/data_files/', { url });
@@ -420,6 +420,6 @@ export async function importFromURL(fileImportStore: FileImport, url: string): P
 // When errors are manually closed
 export function clearErrors(fileImportStore: FileImport): void {
   setInFileStore(fileImportStore, {
-    error: null,
+    error: undefined,
   });
 }

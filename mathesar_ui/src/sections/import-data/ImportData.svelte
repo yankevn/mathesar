@@ -12,7 +12,7 @@
     clearErrors,
   } from './importUtils';
 
-  export let id: unknown = null;
+  export let id: unknown = undefined;
   export let database: Database['name'];
   export let schemaId: SchemaEntry['id'];
   $: identifier = id as string;

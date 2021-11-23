@@ -40,7 +40,7 @@
 
   function getTabLink(entry: MathesarTab) {
     if (entry.isNew) {
-      return null;
+      return undefined;
     }
     return constructTabularTabLink(
       database,

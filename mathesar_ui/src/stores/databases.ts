@@ -11,7 +11,7 @@ import type { CancellablePromise } from '@mathesar-component-library';
 const commonData = preloadCommonData();
 
 export const currentDBName: Writable<Database['name']> = writable(
-  commonData.current_db || null,
+  commonData.current_db || undefined,
 );
 
 export interface DatabaseStoreData {
@@ -59,8 +59,8 @@ export async function reloadDatabases(): Promise<PaginatedResponse<Database>> {
   } catch (err) {
     databases.set({
       state: States.Error,
-      error: err instanceof Error ? err.message : null,
+      error: err instanceof Error ? err.message : undefined,
     });
-    return null;
+    return undefined;
   }
 }

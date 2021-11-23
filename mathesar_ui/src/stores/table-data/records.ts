@@ -203,9 +203,9 @@ export class RecordsData {
     this.state = writable(States.Loading);
     this.savedRecords = writable([] as TableRecord[]);
     this.newRecords = writable([] as TableRecord[]);
-    this.groupInfo = writable(null as GroupInfo);
-    this.totalCount = writable(null as number);
-    this.error = writable(null as string);
+    this.groupInfo = writable(undefined as GroupInfo);
+    this.totalCount = writable(undefined as number);
+    this.error = writable(undefined as string);
 
     this.meta = meta;
     this.columnsDataStore = columnsDataStore;
@@ -241,7 +241,7 @@ export class RecordsData {
 
       return data;
     });
-    this.error.set(null);
+    this.error.set(undefined);
     this.state.set(States.Loading);
     if (!retainExistingRows) {
       this.newRecords.set([]);
@@ -257,7 +257,7 @@ export class RecordsData {
 
       const groupColumns = response?.group_count?.group_count_by;
       const isResultGrouped = groupColumns?.length > 0;
-      let groupCounts: GroupCount = null;
+      let groupCounts: GroupCount | undefined;
       if (isResultGrouped) {
         groupCounts = mapGroupCounts(response.group_count);
       }
@@ -282,7 +282,7 @@ export class RecordsData {
         columns: groupColumns,
       });
       this.totalCount.set(totalCount);
-      this.error.set(null);
+      this.error.set(undefined);
 
       this.fetchCallback?.(storeData);
       return storeData;
@@ -290,7 +290,7 @@ export class RecordsData {
       this.state.set(States.Error);
       this.error.set(err instanceof Error ? err.message : 'Unable to load records');
     }
-    return null;
+    return undefined;
   }
 
   async deleteSelected(): Promise<void> {
@@ -512,7 +512,7 @@ export class RecordsData {
 
   destroy(): void {
     this.promise?.cancel();
-    this.promise = null;
+    this.promise = undefined;
 
     this.requestParamsUnsubscriber();
     this.columnPatchUnsubscriber();

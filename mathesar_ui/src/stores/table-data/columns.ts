@@ -75,7 +75,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
 
   private store: Writable<ColumnsData>;
 
-  private promise: CancellablePromise<PaginatedResponse<Column>> | null = null;
+  private promise: CancellablePromise<PaginatedResponse<Column>> | undefined;
 
   private api: ReturnType<typeof api>;
 
@@ -121,7 +121,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
     return getStoreValue(this.store);
   }
 
-  async fetch(): Promise<ColumnsData | null> {
+  async fetch(): Promise<ColumnsData | undefined> {
     this.update((existingData) => ({
       ...existingData,
       state: States.Loading,
@@ -151,9 +151,9 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
         primaryKey: undefined,
       });
     } finally {
-      this.promise = null;
+      this.promise = undefined;
     }
-    return null;
+    return undefined;
   }
 
   async add(columnDetails: Partial<Column>): Promise<Partial<Column>> {
@@ -217,7 +217,7 @@ export class ColumnsDataStore extends EventHandler implements Writable<ColumnsDa
 
   destroy(): void {
     this.promise?.cancel();
-    this.promise = null;
+    this.promise = undefined;
     super.destroy();
   }
 

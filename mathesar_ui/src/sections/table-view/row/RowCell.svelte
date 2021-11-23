@@ -100,7 +100,7 @@
     on:mousedown={() => display.selectCell(row, column)}
     on:dblclick={() => display.editCell(row, column)}>
     {#if typeof value !== 'undefined'}
-      {#if value === null}
+      {#if value === undefined}
         <Null />
       {:else}
         {value}

@@ -29,7 +29,7 @@
       }));
       setInFileStore(fileImportStore, {
         previewRowsLoadStatus: States.Loading,
-        error: null,
+        error: undefined,
       });
       previewPromise = postAPI<Response>(`/tables/${fileImportData.previewId}/previews/`, {
         columns: columnInfo,
@@ -61,7 +61,7 @@
   <tr>
     {#each ($fileImportStore.previewColumns || []) as column (column.name)}
       <td>
-        {#if row[column.name] === null}
+        {#if row[column.name] === undefined}
           <Null />
         {:else}
           {row[column.name]}

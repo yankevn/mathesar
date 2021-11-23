@@ -40,7 +40,7 @@
       } else if (tabs[index - 1]) {
         activeTab = tabs[index - 1];
       } else {
-        activeTab = null;
+        activeTab = undefined;
       }
     }
     tabs = ([] as Tab[]).concat(tabs);
@@ -68,7 +68,7 @@
   }
 
   function getTabURL(tab: Tab): string {
-    return getLink ? getLink(tab) : tab[linkKey] as string || null;
+    return getLink ? getLink(tab) : tab[linkKey] as string || undefined;
   }
 </script>
 

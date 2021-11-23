@@ -31,7 +31,7 @@ import { currentDBName } from './databases';
 const commonData = preloadCommonData();
 
 export const currentSchemaId: Writable<SchemaEntry['id']> = writable(
-  commonData.current_schema || null,
+  commonData.current_schema || undefined,
 );
 
 export interface DBSchemaStoreData {
@@ -54,7 +54,7 @@ function setDBSchemaStore(
   const storeValue = {
     state: States.Done,
     data: schemaMap,
-    error: null,
+    error: undefined,
   };
 
   let store = dbSchemaStoreMap.get(database);
@@ -103,7 +103,7 @@ export async function refetchSchemasForDB(
   const store = dbSchemaStoreMap.get(database);
   if (!store) {
     console.error(`DB Schemas store for db: ${database} not found.`);
-    return null;
+    return undefined;
   }
 
   try {
@@ -128,7 +128,7 @@ export async function refetchSchemasForDB(
       state: States.Error,
       error: err instanceof Error ? err.message : 'Error in fetching schemas',
     }));
-    return null;
+    return undefined;
   }
 }
 
@@ -139,7 +139,7 @@ export async function refetchSchema(
   const store = dbSchemaStoreMap.get(database);
   if (!store) {
     console.error(`DB Schemas store for db: ${database} not found.`);
-    return null;
+    return undefined;
   }
 
   try {
@@ -148,7 +148,7 @@ export async function refetchSchema(
     updateSchemaInDBSchemaStore(database, response);
     return response;
   } catch (err) {
-    return null;
+    return undefined;
   }
 }
 
@@ -178,7 +178,7 @@ export function getSchemasStoreForDB(database: Database['name']): Writable<DBSch
 export function getSchemaInfo(database: Database['name'], schemaId: SchemaEntry['id']): SchemaEntry {
   const store = dbSchemaStoreMap.get(database);
   if (!store) {
-    return null;
+    return undefined;
   }
   return get(store).data.get(schemaId);
 }
@@ -241,7 +241,7 @@ export const currentSchema: Readable<SchemaEntry> = derived(
   [currentSchemaId, schemas],
   ([$currentSchemaId, $schemas], set) => {
     if (!currentSchemaId) {
-      set(null);
+      set(undefined);
     } else {
       set($schemas.data.get($currentSchemaId));
     }

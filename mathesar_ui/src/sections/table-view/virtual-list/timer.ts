@@ -26,11 +26,11 @@ export function requestTimeout(
 ): { id: number } {
   const start = now();
   // Using an object instead of number, to reuse same object on tick
-  const timeout = { id: null };
+  const timeout = { id: undefined };
 
   function tick() {
     if (now() - start >= delay) {
-      callback.call(null);
+      callback.call(undefined);
     } else {
       timeout.id = requestAnimationFrame(tick);
     }

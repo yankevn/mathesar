@@ -94,7 +94,7 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
 
   private store: Writable<ConstraintsData>;
 
-  private promise: CancellablePromise<PaginatedResponse<Constraint>> | null = null;
+  private promise: CancellablePromise<PaginatedResponse<Constraint>> | undefined;
 
   private api: ReturnType<typeof api>;
 
@@ -136,7 +136,7 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
     return getStoreValue(this.store);
   }
 
-  async fetch(): Promise<ConstraintsData | null> {
+  async fetch(): Promise<ConstraintsData | undefined> {
     this.update((existingData) => ({
       ...existingData,
       state: States.Loading,
@@ -162,9 +162,9 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
         constraints: [],
       });
     } finally {
-      this.promise = null;
+      this.promise = undefined;
     }
-    return null;
+    return undefined;
   }
 
   async add(constraintDetails: Partial<Constraint>): Promise<Partial<Constraint>> {
@@ -207,6 +207,6 @@ export class ConstraintsDataStore implements Writable<ConstraintsData> {
 
   destroy(): void {
     this.promise?.cancel();
-    this.promise = null;
+    this.promise = undefined;
   }
 }

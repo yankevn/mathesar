@@ -19,8 +19,8 @@
   export let expandedItems = new Set();
   export let selectedItems = new Set();
 
-  let link: string;
-  $: link = getLink ? getLink(entry, level) : entry[linkKey] as string || null;
+  let link: string | undefined;
+  $: link = getLink ? getLink(entry, level) : entry[linkKey] as string || undefined;
 
   $: id = entry[idKey] as string;
   $: children = entry[childKey] as TreeItem[];
@@ -55,7 +55,7 @@
 {#if entry[childKey]}
   <li aria-level={level + 1} role="treeitem" tabindex="-1">
     <Button appearance="plain" class="item parent" on:click={toggle}>
-      <Icon data={faCaretRight} rotate={isOpen ? IconRotate.NINETY : null}/>
+      <Icon data={faCaretRight} rotate={isOpen ? IconRotate.NINETY : undefined}/>
       <span>{entry[labelKey]}</span>
     </Button>
 

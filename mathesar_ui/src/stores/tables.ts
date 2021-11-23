@@ -45,7 +45,7 @@ function setSchemaTablesStore(
   const storeValue: DBTablesStoreData = {
     state: States.Done,
     data: tables,
-    error: null,
+    error: undefined,
   };
 
   let store = schemaTablesStoreMap.get(schemaId);
@@ -70,7 +70,7 @@ export async function refetchTablesForSchema(
   const store = schemaTablesStoreMap.get(schemaId);
   if (!store) {
     console.error(`Tables store for schema: ${schemaId} not found.`);
-    return null;
+    return undefined;
   }
 
   try {
@@ -95,7 +95,7 @@ export async function refetchTablesForSchema(
       state: States.Error,
       error: err instanceof Error ? err.message : 'Error in fetching schemas',
     }));
-    return null;
+    return undefined;
   }
 }
 

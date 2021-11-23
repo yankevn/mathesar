@@ -10,7 +10,7 @@ export default function popper(
   },
 ) : Action {
   let popperInstance: Instance;
-  let prevReference: HTMLElement = null;
+  let prevReference: HTMLElement | undefined;
 
   function create(reference: HTMLElement, options?: Partial<Options>) {
     if (reference) {
@@ -49,7 +49,7 @@ export default function popper(
 
   function destroy() {
     popperInstance?.destroy();
-    prevReference = null;
+    prevReference = undefined;
   }
 
   async function update(opts: {
