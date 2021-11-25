@@ -2,13 +2,18 @@ import { createPopper } from '@popperjs/core/dist/umd/popper.min';
 import type { ModifierArguments, Options, Instance } from '@popperjs/core/lib/types';
 import type { Action } from './types';
 
+interface UpdateOptions {
+  reference: HTMLElement,
+  options?: Options
+}
+
 export default function popper(
   node: HTMLElement,
   actionOpts: {
     reference: HTMLElement,
     options?: Partial<Options>
   },
-) : Action {
+): Action<UpdateOptions> {
   let popperInstance: Instance;
   let prevReference: HTMLElement | undefined;
 
@@ -23,11 +28,11 @@ export default function popper(
             enabled: true,
             phase: 'beforeWrite',
             requires: ['computeStyles'],
-            fn: (obj: ModifierArguments<unknown>): void => {
+            fn: (obj: ModifierArguments<{ [key: string]: any }>): void => {
               // eslint-disable-next-line no-param-reassign
               obj.state.styles.popper.minWidth = `${obj.state.rects.reference.width}px`;
             },
-            effect: (obj: ModifierArguments<unknown>): void => {
+            effect: (obj: ModifierArguments<{ [key: string]: any }>): void => {
               const width = (obj.state.elements.reference as HTMLElement).offsetWidth;
               // eslint-disable-next-line no-param-reassign
               obj.state.elements.popper.style.minWidth = `${width}px`;
@@ -52,10 +57,7 @@ export default function popper(
     prevReference = undefined;
   }
 
-  async function update(opts: {
-    reference: HTMLElement,
-    options?: Options
-  }) {
+  async function update(opts: UpdateOptions) {
     const { reference, options } = opts;
 
     if (popperInstance) {

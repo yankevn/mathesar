@@ -66,11 +66,8 @@
   let currentIndex = 0;
   let parentHoverElem: HTMLElement;
 
-  function setValue(opt: SelectOption) {
-    value = opt;
-    dispatch('change', {
-      value,
-    });
+  function setValue(opt: SelectOption | undefined) {
+    dispatch('change', { value: opt });
     isOpen = false;
   }
   
@@ -78,7 +75,7 @@
     if (opts.length > 0) {
       if (!value) {
         setValue(opts[0]);
-      } else if (!opts.find((entry) => entry[idKey] === value[idKey])) {
+      } else if (!opts.find((entry) => entry[idKey] === value?.[idKey])) {
         setValue(opts[0]);
       }
     } else {
@@ -88,17 +85,21 @@
 
   function scrollBehavior(): void {
     if (parentHoverElem) {
-      const hoveredElem: HTMLElement = parentHoverElem.querySelector('.hovered');
-      const container = parentHoverElem.parentElement as HTMLDivElement;
-      if (hoveredElem && container) {
-        if (hoveredElem.offsetTop + hoveredElem.clientHeight
-         > (container.scrollTop + container.clientHeight)) {
-          const offsetValue: number = container.getBoundingClientRect().bottom
-            - hoveredElem.getBoundingClientRect().bottom;
-          container.scrollTop -= offsetValue;
-        } else if (hoveredElem.offsetTop < container.scrollTop) {
-          container.scrollTop = hoveredElem.offsetTop;
-        }
+      const hoveredElem = parentHoverElem.querySelector('.hovered') as HTMLElement | null;
+      if (!hoveredElem) {
+        return;
+      }
+      const container = parentHoverElem.parentElement as HTMLDivElement | null;
+      if (!container) {
+        return;
+      }
+      const h = hoveredElem;
+      const c = container;
+      if ((h.offsetTop + h.clientHeight) > (c.scrollTop + c.clientHeight)) {
+        const offsetValue = c.getBoundingClientRect().bottom - h.getBoundingClientRect().bottom;
+        c.scrollTop -= offsetValue;
+      } else if (h.offsetTop < c.scrollTop) {
+        c.scrollTop = h.offsetTop;
       }
     }
   }
@@ -175,7 +176,7 @@
   <svelte:fragment slot="content">
     <ul bind:this={parentHoverElem} id="select-value-{selectId}" tabindex="0" role="listbox" aria-expanded="true">
       {#each options as option (option[idKey])}
-        <li role='option' class:selected={option[idKey] === value[idKey]} class:hovered={option[idKey] === options[currentIndex]?.[idKey]} on:click={() => setValue(option)}>
+        <li role='option' class:selected={option[idKey] === value?.[idKey]} class:hovered={option[idKey] === options[currentIndex]?.[idKey]} on:click={() => setValue(option)}>
           <span>{option[labelKey]}</span>
         </li>
       {/each}

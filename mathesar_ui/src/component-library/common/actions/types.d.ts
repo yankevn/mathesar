@@ -1,4 +1,4 @@
-export interface Action {
-  update?: (arg: unknown) => void;
+export interface Action<UpdateParameters> {
+  update?: (parameters: UpdateParameters) => void;
   destroy: () => void;
 }

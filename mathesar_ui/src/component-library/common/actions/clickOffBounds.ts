@@ -8,14 +8,20 @@ interface Options {
   references?: Readable<HTMLElement[]>,
 }
 
-export default function clickOffBounds(node: Element, options: Options) : Action {
+export default function clickOffBounds(node: Element, options: Options): Action<Options> {
   let { callback, references } = options;
 
-  function outOfBoundsListener(event: Event) {
-    const isWithinReferenceElement = get(references)?.some(
+  function isWithinReferenceElement(event: Event) {
+    if (!references) {
+      return false;
+    }
+    return get(references).some(
       (reference) => reference.contains(event.target as Node),
     );
-    if (!isWithinReferenceElement && !node.contains(event.target as Node)) {
+  }
+
+  function outOfBoundsListener(event: Event) {
+    if (!isWithinReferenceElement(event) && !node.contains(event.target as Node)) {
       callback(event);
     }
   }

@@ -16,7 +16,7 @@
   const componentId = getId();
 
   export let tabs: Tab[] = [];
-  export let activeTab: Tab = tabs[0];
+  export let activeTab: Tab | undefined = tabs[0];
   export let idKey = 'id';
   export let labelKey = 'label';
   export let linkKey = 'href';
@@ -34,7 +34,7 @@
 
   function removeTab(e: { detail: Event }, index: number) {
     const removedTab = tabs.splice(index, 1);
-    if (activeTab[idKey] === removedTab[0]?.[idKey]) {
+    if (activeTab?.[idKey] === removedTab[0]?.[idKey]) {
       if (tabs[index]) {
         activeTab = tabs[index];
       } else if (tabs[index - 1]) {
@@ -52,11 +52,11 @@
   }
 
   function focusTab(e: Event) {
-    (e.target as Node).parentElement.classList.add('focused');
+    (e.target as Node).parentElement?.classList.add('focused');
   }
 
   function blurTab(e: Event) {
-    (e.target as Node).parentElement.classList.remove('focused');
+    (e.target as Node).parentElement?.classList.remove('focused');
   }
 
   function checkAndPreventDefault(e: Event) {
@@ -76,7 +76,7 @@
   <ul role="tablist" class="tabs">
     {#each tabs as tab, index (tab[idKey] || tab)}
       <TabComponent {componentId} {tab} {allowRemoval} totalTabs={tabs.length}
-        {getTabURL} isActive={tab[idKey] === activeTab[idKey]}
+        {getTabURL} isActive={tab[idKey] === activeTab?.[idKey]}
         on:focus={focusTab} on:blur={blurTab}
         on:click={checkAndPreventDefault} on:mousedown={(e) => selectActiveTab(e, tab)}
         on:remove={(e) => removeTab(e, index)}>
